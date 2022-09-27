@@ -3,14 +3,14 @@ const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 require("dotenv").config();
 
-const ElectricityMapAPI = require('./datasources/electricity-map-api');
+const TflAPI = require('./datasources/tfl-api');
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: () => {
     return {
-      electricityMapAPI: new ElectricityMapAPI(),
+      tflAPI: new TflAPI(),
     };
   }
 });

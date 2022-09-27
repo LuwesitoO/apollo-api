@@ -1,94 +1,120 @@
 const { GraphQLScalarType, Kind } = require("graphql");
-
-let dateValidation = (value) => {
-  const data = new Date(value);
-  if (data instanceof Date && !isNaN(data)) {
-    return data;
-  }
-  throw new Error("Provided value is not a valid date");
-};
-
 const resolvers = {
   Query: {
-    liveCarbonIntensity: async (_, { zone }, { dataSources }) => {
+    getRoadCorridors: async (_, { app_id, app_key }, { dataSources }) => {
       try {
-        const carbonIntensity =
-          await dataSources.electricityMapAPI.getLiveCarbonIntensity(zone);
+        const roadCorridors =
+          await dataSources.tflAPI.getRoadCorridors(app_id,app_key);
 
         return {
           code: 200,
           success: true,
-          message: `Successfully pulled live carbon intensity for zone ${zone}`,
-          carbonIntensity,
+          message: `Successfully pulled all corridors for road`,
+          roadCorridors,
         };
       } catch (err) {
         return {
           code: err.extensions.response.status,
           success: false,
           message: err.extensions.response.body,
-          carbonIntensity: null,
+          roadCorridors: null,
         };
       }
     },
-    carbonIntensityHistory: async (_, { zone }, { dataSources }) => {
+
+    getAllArrivals: async (_, { app_id, app_key }, { dataSources }) => {
       try {
-        const carbonIntensityHistory =
-          await dataSources.electricityMapAPI.getCarbonIntensityHistory(zone);
+        const allArrivals =
+          await dataSources.tflAPI.getAllArrivals(app_id,app_key);
 
         return {
           code: 200,
           success: true,
-          message: `Successfully pulled carbon intensity history for zone ${zone}`,
-          carbonIntensityHistory,
+          message: `Successfully pulled all Arrivals`,
+          allArrivals,
         };
       } catch (err) {
         return {
           code: err.extensions.response.status,
           success: false,
           message: err.extensions.response.body,
-          carbonIntensityHistory: null,
+          allArrivals: null,
         };
       }
     },
-    carbonIntensityForecast: async ( _, { zone }, { dataSources }) => {
+
+    getLineByMode: async (_, { app_id, app_key }, { dataSources }) => {
       try {
-        const carbonIntensityForecast = await dataSources.electricityMapAPI.getCarbonIntensityForecast(zone);
-        
+        const lineByMode =
+          await dataSources.tflAPI.getLineByMode(app_id,app_key);
+
         return {
           code: 200,
           success: true,
-          message: `Successfully pulled carbon intensity forecast for zone ${zone}`,
-          carbonIntensityForecast,
+          message: `Successfully pulled all Lines by mode`,
+          lineByMode,
         };
       } catch (err) {
         return {
           code: err.extensions.response.status,
           success: false,
           message: err.extensions.response.body,
-          carbonIntensityHistory: null,
+          lineByMode: null,
         };
       }
-  },
-    testQuery: ( _, {datetime}) => {
-      return "Input is a valid date";
-    }
-  },
-  Date: new GraphQLScalarType({
-    name: "Date",
-    description: "Date custom scalar type",
-    serialize: dateValidation,
-    parseValue: dateValidation,
-    parseLiteral(ast) {
-      if (ast.kind === Kind.STRING) {
-        const data = new Date(ast.value);
-        if (data instanceof Date && !isNaN(data)) {
-          return data;
-        }
-        throw new Error("Provided value is not a valid date");
-      }
-      throw new Error("Provided value is not a valid date");
     },
-  }),
+
+    getStatusByMode: async (_, { app_id, app_key }, { dataSources }) => {
+      try {
+        const statusByMode =
+          await dataSources.tflAPI.getStatusByMode(app_id,app_key);
+
+        return {
+          code: 200,
+          success: true,
+          message: `Successfully pulled status by mode`,
+          statusByMode,
+        };
+      } catch (err) {
+        return {
+          code: err.extensions.response.status,
+          success: false,
+          message: err.extensions.response.body,
+          statusByMode: null,
+        };
+      }
+    },
+
+    getRouteByMode: async (_, { app_id, app_key }, { dataSources }) => {
+      try {
+        const routeByMode =
+          await dataSources.tflAPI.getRouteByMode(app_id,app_key);
+
+        return {
+          code: 200,
+          success: true,
+          message: `Successfully pulled status by mode`,
+          routeByMode,
+        };
+      } catch (err) {
+        return {
+          code: err.extensions.response.status,
+          success: false,
+          message: err.extensions.response.body,
+          routeByMode: null,
+        };
+      }
+    },
+  },
+  RoadCorridors: {
+    type: (parent) => parent["$type"],
+  }, 
+  AllArrivals: {
+    type: (parent) => parent["$type"],
+  }, 
+  Timing: {
+    type: (parent) => parent["$type"],
+  }, 
 };
 
 module.exports = resolvers;
