@@ -68,7 +68,7 @@ const resolvers = {
           carbonIntensityHistory: null,
         };
       }
-    },
+  },
     testQuery: ( _, {datetime}) => {
       return "Input is a valid date";
     }
